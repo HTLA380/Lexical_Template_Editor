@@ -5,8 +5,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Lexical Template Editor",
-  description: "lexical template editor using next.js",
+  title: "Tiptap Template Editor",
+  description: "Tiptap template editor using next.js",
 };
 
 export default function RootLayout({
