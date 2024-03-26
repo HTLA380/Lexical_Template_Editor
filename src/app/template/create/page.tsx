@@ -1,17 +1,24 @@
 "use client";
 
-import { useEditorContext } from "@/context/EditorContext";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { Save, X } from "lucide-react";
+import { useRouter } from "next/navigation";
+
 import Tiptap from "@/components/editor/Tiptap";
+import { useEditorContext } from "@/context/EditorContext";
 import {
   getDataFromLocalStorage,
   saveDataToLocalStorage,
 } from "@/util/localStorageUtil";
+import { getCurrentDateTime } from "@/util/dateUtil";
+
+// =====================================================================
 
 const CreateTemplate = () => {
   const editor = useEditorContext();
+  const router = useRouter();
+
   const [showModal, setShowModal] = useState<boolean>(false);
   const [documentName, setDocumentName] = useState<string>("");
 
@@ -22,46 +29,46 @@ const CreateTemplate = () => {
   }, [editor]);
 
   const saveDocument = () => {
-    // do nothing if the editor doesn't exist or if the editor content is empty
     if (!editor || editor.state.doc.content.childCount === 0) return;
 
-    const storedData = getDataFromLocalStorage("templates");
+    const templates = getDataFromLocalStorage("templates") || [];
+    const title = documentName || `Document ${templates.length || ""}`;
 
-    const parsedData = storedData ? JSON.parse(storedData) : [];
-
-    const newDocument = {
+    const newTemplate = {
       id: uuidv4(),
-      title: documentName || "document",
+      title,
       editorContent: editor.getHTML(),
+      createAt: getCurrentDateTime(),
     };
 
-    parsedData.push(newDocument);
-
-    const updatedJsonString = JSON.stringify(parsedData);
-
-    saveDataToLocalStorage("templates", updatedJsonString);
+    templates.push(newTemplate);
+    saveDataToLocalStorage("templates", templates);
+    router.push("/");
   };
 
-  const saveModal = (
+  const handleModalClose = () => {
+    setShowModal(false);
+  };
+
+  const saveModalContent = (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div className="flex h-fit w-full max-w-md flex-col gap-3 rounded-md bg-white p-3">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-medium">Save Template</h3>
-          <button
-            onClick={() => setShowModal(false)}
-            className="hover:text-gray-500">
+          <button onClick={handleModalClose} className="hover:text-gray-500">
             <X size={20} />
           </button>
         </div>
         <input
           value={documentName}
+          required
           onChange={(e) => setDocumentName(e.target.value)}
           className="w-full rounded-md border border-gray-300 px-4 py-2"
           placeholder="file name"
         />
         <div className="flex items-center justify-end gap-3">
           <button
-            onClick={() => setShowModal(false)}
+            onClick={handleModalClose}
             className="w-fit rounded-md border border-gray-800 bg-transparent px-4 py-2 text-sm text-black hover:bg-gray-200">
             Cancel
           </button>
@@ -86,7 +93,7 @@ const CreateTemplate = () => {
         <Save />
       </button>
 
-      {showModal && saveModal}
+      {showModal && saveModalContent}
     </div>
   );
 };

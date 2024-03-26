@@ -1,4 +1,3 @@
-import clsx from "clsx";
 import { type Editor } from "@tiptap/react";
 import {
   AlignCenter,
@@ -7,11 +6,10 @@ import {
   AlignRight,
   Bold,
   Code,
-  Italic,
-  Link,
   Redo,
-  Underline,
   Undo,
+  Italic,
+  Underline,
 } from "lucide-react";
 import React from "react";
 import IconButton from "../button/IconButton";
