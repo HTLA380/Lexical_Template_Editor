@@ -1,6 +1,7 @@
 "use client";
 
 import { useLocalStorageContext } from "@/context/LocalStorageContext";
+import { TemplateType } from "@/types/templateTypes";
 import { saveDataToLocalStorage } from "@/util/localStorageUtil";
 import { Save } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -10,12 +11,7 @@ interface FillDataProps {
   params: { id: string };
 }
 
-interface TemplateType {
-  id: string;
-  title: string;
-  editorContent: string;
-  createAt: string;
-}
+// ============================================================
 
 const FillData: React.FC<FillDataProps> = ({ params }) => {
   const { templates } = useLocalStorageContext();
