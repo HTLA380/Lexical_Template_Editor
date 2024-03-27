@@ -35,13 +35,13 @@ const FillData: React.FC<FillDataProps> = ({ params }) => {
     return placeholders;
   };
 
-  const replaceVariable = (
-    content: string,
-    placeholder: string,
-    value: string,
-  ) => {
-    const regex = new RegExp(`{{${placeholder}}}`, "g");
-    return content.replace(regex, value);
+  const replaceVariables = (content: string) => {
+    const placeholders = findPlaceholders(content);
+    return placeholders.reduce((acc, placeholder) => {
+      const regex = new RegExp(`{{${placeholder}}}`);
+      const value = inputValues[placeholder] || "";
+      return acc.replace(regex, value);
+    }, content);
   };
 
   useEffect(() => {
@@ -57,10 +57,15 @@ const FillData: React.FC<FillDataProps> = ({ params }) => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setInputValues((prev) => ({ ...prev, [name]: value }));
-    setModifiedHtmlContent((prev) => {
-      console.log("for" + replaceVariable(prev, name, value));
-      return replaceVariable(prev, name, value);
-    });
+  };
+
+  useEffect(() => {
+    updateContent();
+  }, [inputValues]);
+
+  const updateContent = () => {
+    const replacedContent = replaceVariables(originalHtmlContent);
+    setModifiedHtmlContent(replacedContent); // Update the modified content with replaced variables
   };
 
   const saveFilledTemplate = () => {
@@ -98,7 +103,7 @@ const FillData: React.FC<FillDataProps> = ({ params }) => {
         </div>
       </div>
       <div className="flex h-screen w-1/2 items-center justify-center p-8">
-        <form className="relative h-full max-h-96 w-full max-w-xl rounded-lg border bg-white p-3">
+        <div className="relative h-full max-h-96 w-full max-w-xl rounded-lg border bg-white p-3">
           <h3 className="text-center text-xl font-semibold">Form</h3>
           {placeholders.map((placeholder) => (
             <div className="mb-3" key={placeholder}>
@@ -117,7 +122,7 @@ const FillData: React.FC<FillDataProps> = ({ params }) => {
             className="absolute bottom-3 right-3 rounded-xl bg-gray-800 p-2 text-white hover:bg-gray-700">
             <Save />
           </button>
-        </form>
+        </div>
       </div>
     </main>
   );

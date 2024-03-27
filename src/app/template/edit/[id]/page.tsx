@@ -9,20 +9,13 @@ import { useEditorContext } from "@/context/EditorContext";
 import { saveDataToLocalStorage } from "@/util/localStorageUtil";
 import { getCurrentDateTime } from "@/util/dateUtil";
 import { useLocalStorageContext } from "@/context/LocalStorageContext";
+import { TemplateType } from "@/types/templateTypes";
 
 // =====================================================================
 
 interface EditTemplateInterface {
   params: { id: string };
 }
-
-interface TemplateType {
-  id: string;
-  title: string;
-  editorContent: string;
-  createAt: string;
-}
-
 const EditTemplate: React.FC<EditTemplateInterface> = ({ params }) => {
   const { templates } = useLocalStorageContext();
   const editor = useEditorContext();
