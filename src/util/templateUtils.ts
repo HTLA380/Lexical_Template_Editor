@@ -1,8 +1,28 @@
 import { TemplateType } from "@/types/templateTypes";
 import { saveDataToLocalStorage } from "./localStorageUtil";
+import { v4 as uuidv4 } from "uuid";
 
 export const findTemplate = (templates: TemplateType[], id: string) => {
   return templates.find((t) => t.id === id) || null;
+};
+
+export const saveTemplate = (
+  templates: TemplateType[],
+  title: string,
+  content: string,
+  createAt: string,
+) => {
+  const tempTemplate = templates;
+
+  const newTemplate: TemplateType = {
+    id: uuidv4(),
+    title,
+    editorContent: content,
+    createAt: createAt,
+  };
+
+  tempTemplate.push(newTemplate);
+  saveDataToLocalStorage("templates", tempTemplate);
 };
 
 export const updateTemplate = (

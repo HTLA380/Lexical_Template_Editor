@@ -11,6 +11,7 @@ import { saveDataToLocalStorage } from "@/util/localStorageUtil";
 import { getCurrentDateTime } from "@/util/dateUtil";
 import { useLocalStorageContext } from "@/context/LocalStorageContext";
 import { TemplateType } from "@/types/templateTypes";
+import { saveTemplate } from "@/util/templateUtils";
 
 // =====================================================================
 
@@ -22,6 +23,7 @@ const CreateTemplate = () => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [documentName, setDocumentName] = useState<string>("");
 
+  // setting the initial data as soon as the editor ready
   useEffect(() => {
     if (editor) {
       editor.commands.setContent("<p>Create Template</p>");
@@ -33,15 +35,7 @@ const CreateTemplate = () => {
 
     const title = documentName || `Document ${templates?.length || ""}`;
 
-    const newTemplate: TemplateType = {
-      id: uuidv4(),
-      title,
-      editorContent: editor.getHTML(),
-      createAt: getCurrentDateTime(),
-    };
-
-    templates.push(newTemplate);
-    saveDataToLocalStorage("templates", templates);
+    saveTemplate(templates, title, editor.getHTML(), getCurrentDateTime());
     router.push("/");
   };
 
