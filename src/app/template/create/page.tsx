@@ -10,6 +10,7 @@ import { useEditorContext } from "@/context/EditorContext";
 import { saveDataToLocalStorage } from "@/util/localStorageUtil";
 import { getCurrentDateTime } from "@/util/dateUtil";
 import { useLocalStorageContext } from "@/context/LocalStorageContext";
+import { TemplateType } from "@/types/templateTypes";
 
 // =====================================================================
 
@@ -28,12 +29,11 @@ const CreateTemplate = () => {
   }, [editor]);
 
   const saveDocument = () => {
-    if (!editor || editor.state.doc.content.childCount === 0 || !templates)
-      return;
+    if (!editor || editor.state.doc.content.childCount === 0) return;
 
-    const title = documentName || `Document ${templates.length || ""}`;
+    const title = documentName || `Document ${templates?.length || ""}`;
 
-    const newTemplate = {
+    const newTemplate: TemplateType = {
       id: uuidv4(),
       title,
       editorContent: editor.getHTML(),

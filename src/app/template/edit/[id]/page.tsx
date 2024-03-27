@@ -26,7 +26,7 @@ const EditTemplate: React.FC<EditTemplateInterface> = ({ params }) => {
 
   // adding initial values as soon as editor ready
   useEffect(() => {
-    if (!editor || !templates) return;
+    if (!editor) return;
 
     const template =
       templates.find((template) => template.id === params.id) || null;

@@ -14,8 +14,8 @@ interface Template {
 }
 
 interface LocalStorageContextInterface {
-  templates: Template[] | null;
-  setTemplates: React.Dispatch<React.SetStateAction<Template[] | null>>;
+  templates: Template[];
+  setTemplates: React.Dispatch<React.SetStateAction<Template[] | []>>;
 }
 
 const LocalStorageContext = createContext<LocalStorageContextInterface>({
@@ -32,10 +32,10 @@ interface LocalStorageProviderProps {
 export const LocalStorageProvider: React.FC<LocalStorageProviderProps> = ({
   children,
 }) => {
-  const [templates, setTemplates] = useState<Template[] | null>(null);
+  const [templates, setTemplates] = useState<Template[]>([]);
 
   useEffect(() => {
-    const data = getDataFromLocalStorage("templates") || null;
+    const data = getDataFromLocalStorage("templates") || [];
     setTemplates(data);
   }, []);
 
