@@ -25,33 +25,6 @@ export const saveTemplate = (
   saveDataToLocalStorage("templates", tempTemplate);
 };
 
-export const updateTemplate = (
-  htmlContent: string,
-  templates: TemplateType[],
-  id: string,
-): void => {
-  const targetTemplate = findTemplate(templates, id);
-
-  if (!targetTemplate) return;
-
-  // Create an updated template with the modified HTML content
-  const updatedTemplate: TemplateType = {
-    ...targetTemplate,
-    title: targetTemplate.title,
-    editorContent: htmlContent,
-  };
-
-  // Update the templates array with the modified template
-  const updatedTemplates = templates?.map((template: TemplateType) =>
-    template.id === id ? updatedTemplate : template,
-  );
-
-  // Save the updated templates to local storage
-  if (updatedTemplates) {
-    saveDataToLocalStorage("templates", updatedTemplates);
-  }
-};
-
 export const findPlaceholders = (content: string) => {
   const regex = /{{(.*?)}}/g;
   let matches;

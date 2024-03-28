@@ -7,18 +7,15 @@ import { useRouter } from "next/navigation";
 
 import Tiptap from "@/components/editor/Tiptap";
 import { useEditorContext } from "@/context/EditorContext";
-import { saveDataToLocalStorage } from "@/util/localStorageUtil";
 import { getCurrentDateTime } from "@/util/dateUtil";
 import { useLocalStorageContext } from "@/context/LocalStorageContext";
-import { TemplateType } from "@/types/templateTypes";
-import { saveTemplate } from "@/util/templateUtils";
 
 // =====================================================================
 
 const CreateTemplate = () => {
   const editor = useEditorContext();
   const router = useRouter();
-  const { templates } = useLocalStorageContext();
+  const { templates, saveTemplate } = useLocalStorageContext();
 
   const [showModal, setShowModal] = useState<boolean>(false);
   const [documentName, setDocumentName] = useState<string>("");
@@ -35,7 +32,7 @@ const CreateTemplate = () => {
 
     const title = documentName || `Document ${templates?.length || ""}`;
 
-    saveTemplate(templates, title, editor.getHTML(), getCurrentDateTime());
+    saveTemplate(title, editor.getHTML(), getCurrentDateTime());
     router.push("/");
   };
 

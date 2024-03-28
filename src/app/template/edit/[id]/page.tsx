@@ -6,10 +6,7 @@ import Tiptap from "@/components/editor/Tiptap";
 import { useRouter } from "next/navigation";
 
 import { useEditorContext } from "@/context/EditorContext";
-import { saveDataToLocalStorage } from "@/util/localStorageUtil";
-import { getCurrentDateTime } from "@/util/dateUtil";
 import { useLocalStorageContext } from "@/context/LocalStorageContext";
-import { TemplateType } from "@/types/templateTypes";
 
 // =====================================================================
 
@@ -17,7 +14,7 @@ interface EditTemplateInterface {
   params: { id: string };
 }
 const EditTemplate: React.FC<EditTemplateInterface> = ({ params }) => {
-  const { templates } = useLocalStorageContext();
+  const { templates, updateTemplate, findTemplate } = useLocalStorageContext();
   const editor = useEditorContext();
   const router = useRouter();
 
@@ -28,37 +25,17 @@ const EditTemplate: React.FC<EditTemplateInterface> = ({ params }) => {
   useEffect(() => {
     if (!editor) return;
 
-    const template =
-      templates.find((template) => template.id === params.id) || null;
-
+    const template = findTemplate(params.id);
     setDocumentName(template?.title || "Document");
-
     editor.commands.setContent(template?.editorContent || "Content");
   }, [editor]);
 
   const saveUpdatedDocument = () => {
-    const template =
-      templates?.find((template) => template.id === params.id) || null;
-    if (!editor || editor.state.doc.content.childCount === 0 || !template)
-      return;
+    // do nothing if the editor doesn't have any elements
+    if (!editor || editor.state.doc.content.childCount === 0) return;
 
-    const updatedTemplate: TemplateType = {
-      ...template,
-      title: documentName || template.title,
-      editorContent: editor.getHTML(),
-      createAt: getCurrentDateTime(),
-    };
-
-    const updatedTemplates: TemplateType[] = templates || [];
-    const templateIndex: number = updatedTemplates.findIndex(
-      (t) => t.id === params.id,
-    );
-
-    if (templateIndex !== -1) {
-      updatedTemplates[templateIndex] = updatedTemplate;
-      saveDataToLocalStorage("templates", updatedTemplates);
-      router.push("/");
-    }
+    updateTemplate(editor.getHTML(), params.id);
+    router.push("/");
   };
 
   const handleModalClose = () => {
