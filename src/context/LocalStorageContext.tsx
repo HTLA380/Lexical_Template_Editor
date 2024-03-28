@@ -12,7 +12,7 @@ interface LocalStorageContextInterface {
   templates: TemplateType[];
   setTemplates: React.Dispatch<React.SetStateAction<TemplateType[] | []>>;
   findTemplate: (id: string) => TemplateType | null;
-  updateTemplate: (htmlContent: string, id: string) => void;
+  updateTemplate: (updated: TemplateType, id: string) => void;
   saveTemplate: (title: string, content: string, createAt: string) => void;
 }
 
@@ -44,27 +44,14 @@ export const LocalStorageProvider: React.FC<LocalStorageProviderProps> = ({
     return templates.find((t) => t.id === id) || null;
   };
 
-  const updateTemplate = (htmlContent: string, id: string): void => {
-    const targetTemplate = findTemplate(id);
-
-    if (!targetTemplate) return;
-
-    // Create an updated template with the modified HTML content
-    const updatedTemplate: TemplateType = {
-      ...targetTemplate,
-      title: targetTemplate.title,
-      editorContent: htmlContent,
-    };
-
-    // Update the templates array with the modified template
-    const updatedTemplates = templates?.map((template: TemplateType) =>
-      template.id === id ? updatedTemplate : template,
+  const updateTemplate = (updated: TemplateType, id: string) => {
+    const updatedTemplate = templates?.map((template) =>
+      template.id === id ? { ...template, ...updated } : template,
     );
 
-    // Save the updated templates to local storage
-    if (updatedTemplates) {
-      saveDataToLocalStorage("templates", updatedTemplates);
-      setTemplates(updatedTemplates);
+    if (updatedTemplate) {
+      saveDataToLocalStorage("templates", updatedTemplate);
+      setTemplates(updatedTemplate);
     }
   };
 

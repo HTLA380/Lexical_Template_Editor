@@ -1,8 +1,11 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
 import { useLocalStorageContext } from "@/context/LocalStorageContext";
+import Link from "next/link";
+import Button from "@/components/button/Button";
+
+// =================================================================
 
 const Home = () => {
   const { templates: templateList } = useLocalStorageContext();
@@ -12,9 +15,7 @@ const Home = () => {
       <nav className="mx-auto flex w-full max-w-6xl items-center justify-between border-b border-gray-900 pb-5">
         <h1>Lexical Template</h1>
         <div className="flex items-center gap-2 ">
-          <button className="rounded-md bg-gray-900 px-3 py-2 text-sm text-white shadow-sm transition-colors hover:bg-gray-700">
-            Template List
-          </button>
+          <Button>Template List</Button>
           <Link
             href="/template/create"
             className="rounded-md border border-gray-800 bg-transparent px-3 py-2 text-sm text-gray-900 shadow-sm hover:bg-gray-300">

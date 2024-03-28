@@ -1,81 +1,74 @@
 "use client";
 
-import { useLocalStorageContext } from "@/context/LocalStorageContext";
-import { TemplateType } from "@/types/templateTypes";
-import { saveDataToLocalStorage } from "@/util/localStorageUtil";
-import { findPlaceholders, replaceVariables } from "@/util/templateUtils";
-import { Save } from "lucide-react";
-import { useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { Save } from "lucide-react";
+import { useLocalStorageContext } from "@/context/LocalStorageContext";
+import { findPlaceholders, replaceVariables } from "@/util/templateUtils";
+import { TemplateType } from "@/types/templateTypes";
+
+// ==========================================================================
 
 interface FillDataProps {
   params: { id: string };
 }
 
 const FillData: React.FC<FillDataProps> = ({ params }) => {
-  const { templates, findTemplate } = useLocalStorageContext();
+  const { findTemplate, updateTemplate } = useLocalStorageContext();
   const [htmlContent, setHtmlContent] = useState<string>("");
   const [inputValues, setInputValues] = useState<Record<string, string>>({});
-  const [template, setTemplate] = useState<TemplateType | null>(null); // Add template state
+  const [currentTemplate, setCurrentTemplate] = useState<TemplateType | null>(
+    null,
+  );
   const router = useRouter();
   const htmlElementRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const foundTemplate = findTemplate(params.id);
-    setTemplate(foundTemplate);
+    const currentTemplate = findTemplate(params.id);
+    if (currentTemplate) {
+      setCurrentTemplate(currentTemplate);
+      setHtmlContent(currentTemplate.editorContent);
+    }
 
     if (htmlElementRef.current) {
-      htmlElementRef.current.innerHTML = foundTemplate?.editorContent || "";
+      htmlElementRef.current.innerHTML = currentTemplate?.editorContent || "";
     }
+  }, [params.id, currentTemplate]);
 
-    if (foundTemplate) {
-      setHtmlContent(foundTemplate.editorContent);
+  useEffect(() => {
+    const updatedContent = replaceVariables(
+      inputValues,
+      currentTemplate?.editorContent || "",
+    );
+    setHtmlContent(updatedContent);
+  }, [inputValues]);
+
+  useEffect(() => {
+    if (htmlElementRef.current) {
+      htmlElementRef.current.innerHTML = htmlContent || "";
     }
-  }, [templates, params.id, template]);
+  }, [htmlContent]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setInputValues((prev) => ({ ...prev, [name]: value }));
   };
 
-  useEffect(() => {
-    const updatedContent = replaceVariables(
-      inputValues,
-      template?.editorContent || "",
-    );
-    setHtmlContent(updatedContent);
-
-    if (htmlElementRef.current) {
-      htmlElementRef.current.innerHTML = htmlContent || "";
-    }
-  }, [inputValues]);
-
   const saveFilledTemplate = () => {
-    const template =
-      templates?.find((template) => template.id === params.id) || null;
+    if (!currentTemplate) return;
 
-    if (!template) return;
-
-    const updatedTemplate: TemplateType = {
-      ...template,
-      title: template.title,
+    const filledTemplateObject: TemplateType = {
+      ...currentTemplate,
+      title: currentTemplate.title,
       editorContent: htmlContent,
-      createAt: template.createAt,
+      createAt: currentTemplate.createAt,
     };
 
-    const updatedTemplates: TemplateType[] = templates || [];
-    const templateIndex: number = updatedTemplates.findIndex(
-      (t) => t.id === params.id,
-    );
-
-    if (templateIndex !== -1) {
-      updatedTemplates[templateIndex] = updatedTemplate;
-      saveDataToLocalStorage("templates", updatedTemplates);
-      router.push("/");
-    }
+    updateTemplate(filledTemplateObject, params.id);
+    router.push("/");
   };
 
-  const placeholders = findPlaceholders(template?.editorContent || "");
+  const placeholders = findPlaceholders(currentTemplate?.editorContent || "");
 
   return (
     <main className="flex min-h-screen w-full items-center bg-slate-200">

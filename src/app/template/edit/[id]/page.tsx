@@ -7,6 +7,8 @@ import { useRouter } from "next/navigation";
 
 import { useEditorContext } from "@/context/EditorContext";
 import { useLocalStorageContext } from "@/context/LocalStorageContext";
+import { TemplateType } from "@/types/templateTypes";
+import Button from "@/components/button/Button";
 
 // =====================================================================
 
@@ -14,7 +16,7 @@ interface EditTemplateInterface {
   params: { id: string };
 }
 const EditTemplate: React.FC<EditTemplateInterface> = ({ params }) => {
-  const { templates, updateTemplate, findTemplate } = useLocalStorageContext();
+  const { updateTemplate, findTemplate } = useLocalStorageContext();
   const editor = useEditorContext();
   const router = useRouter();
 
@@ -33,8 +35,16 @@ const EditTemplate: React.FC<EditTemplateInterface> = ({ params }) => {
   const saveUpdatedDocument = () => {
     // do nothing if the editor doesn't have any elements
     if (!editor || editor.state.doc.content.childCount === 0) return;
+    const template = findTemplate(params.id);
 
-    updateTemplate(editor.getHTML(), params.id);
+    if (!template) return;
+    const updatedTemplateObject: TemplateType = {
+      ...template,
+      title: template.title,
+      editorContent: editor.getHTML(),
+    };
+
+    updateTemplate(updatedTemplateObject, params.id);
     router.push("/");
   };
 
@@ -46,12 +56,12 @@ const EditTemplate: React.FC<EditTemplateInterface> = ({ params }) => {
     <div className="relative bg-slate-100 px-5 pb-10 pt-20">
       <Tiptap />
 
-      <button
+      <Button
         onClick={() => setShowModal(true)}
-        title="save"
-        className="fixed bottom-5 right-10 z-10 rounded-md border border-gray-900 bg-white p-2 text-sm text-gray-900 shadow-sm transition-colors hover:bg-gray-200">
+        variant="outline"
+        className="fixed bottom-5 right-10 z-10 shadow-sm">
         <Save />
-      </button>
+      </Button>
 
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
@@ -71,16 +81,10 @@ const EditTemplate: React.FC<EditTemplateInterface> = ({ params }) => {
               placeholder="file name"
             />
             <div className="flex items-center justify-end gap-3">
-              <button
-                onClick={handleModalClose}
-                className="w-fit rounded-md border border-gray-800 bg-transparent px-4 py-2 text-sm text-black hover:bg-gray-200">
+              <Button onClick={handleModalClose} variant="outline">
                 Cancel
-              </button>
-              <button
-                onClick={saveUpdatedDocument}
-                className="w-fit rounded-md bg-gray-900 px-4 py-2 text-sm text-white hover:bg-gray-800">
-                Save
-              </button>
+              </Button>
+              <Button onClick={saveUpdatedDocument}>Save</Button>
             </div>
           </div>
         </div>
