@@ -3,50 +3,33 @@
 import { useLocalStorageContext } from "@/context/LocalStorageContext";
 import { TemplateType } from "@/types/templateTypes";
 import { saveDataToLocalStorage } from "@/util/localStorageUtil";
+import { findPlaceholders, replaceVariables } from "@/util/templateUtils";
 import { Save } from "lucide-react";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 interface FillDataProps {
   params: { id: string };
 }
 
-// ============================================================
-
 const FillData: React.FC<FillDataProps> = ({ params }) => {
-  const { templates } = useLocalStorageContext();
-  const [originalHtmlContent, setOriginalHtmlContent] = useState<string>("");
-  const [modifiedHtmlContent, setModifiedHtmlContent] = useState<string>("");
+  const { templates, findTemplate } = useLocalStorageContext();
+  const [htmlContent, setHtmlContent] = useState<string>("");
   const [inputValues, setInputValues] = useState<Record<string, string>>({});
   const [template, setTemplate] = useState<TemplateType | null>(null); // Add template state
   const router = useRouter();
-
-  const findPlaceholders = (content: string) => {
-    const regex = /{{(.*?)}}/g;
-    let matches;
-    const placeholders = [];
-    while ((matches = regex.exec(content)) !== null) {
-      placeholders.push(matches[1]);
-    }
-    return placeholders;
-  };
-
-  const replaceVariables = (content: string) => {
-    const placeholders = findPlaceholders(content);
-    return placeholders.reduce((acc, placeholder) => {
-      const regex = new RegExp(`{{${placeholder}}}`);
-      const value = inputValues[placeholder] || "";
-      return acc.replace(regex, value);
-    }, content);
-  };
+  const htmlElementRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const foundTemplate = templates?.find((t) => t.id === params.id) || null;
-    setTemplate(foundTemplate); // Update the template state
+    const foundTemplate = findTemplate(params.id);
+    setTemplate(foundTemplate);
+
+    if (htmlElementRef.current) {
+      htmlElementRef.current.innerHTML = foundTemplate?.editorContent || "";
+    }
 
     if (foundTemplate) {
-      setOriginalHtmlContent(foundTemplate.editorContent);
-      setModifiedHtmlContent(foundTemplate.editorContent);
+      setHtmlContent(foundTemplate.editorContent);
     }
   }, [templates, params.id, template]);
 
@@ -56,13 +39,16 @@ const FillData: React.FC<FillDataProps> = ({ params }) => {
   };
 
   useEffect(() => {
-    updateContent();
-  }, [inputValues]);
+    const updatedContent = replaceVariables(
+      inputValues,
+      template?.editorContent || "",
+    );
+    setHtmlContent(updatedContent);
 
-  const updateContent = () => {
-    const replacedContent = replaceVariables(originalHtmlContent);
-    setModifiedHtmlContent(replacedContent); // Update the modified content with replaced variables
-  };
+    if (htmlElementRef.current) {
+      htmlElementRef.current.innerHTML = htmlContent || "";
+    }
+  }, [inputValues]);
 
   const saveFilledTemplate = () => {
     const template =
@@ -73,7 +59,7 @@ const FillData: React.FC<FillDataProps> = ({ params }) => {
     const updatedTemplate: TemplateType = {
       ...template,
       title: template.title,
-      editorContent: modifiedHtmlContent,
+      editorContent: htmlContent,
       createAt: template.createAt,
     };
 
@@ -89,13 +75,13 @@ const FillData: React.FC<FillDataProps> = ({ params }) => {
     }
   };
 
-  const placeholders = findPlaceholders(originalHtmlContent);
+  const placeholders = findPlaceholders(template?.editorContent || "");
 
   return (
     <main className="flex min-h-screen w-full items-center bg-slate-200">
       <div className="h-screen w-1/2 p-8">
         <div className="h-full w-full rounded-md bg-white p-5">
-          <div dangerouslySetInnerHTML={{ __html: modifiedHtmlContent }} />
+          <div ref={htmlElementRef} />
         </div>
       </div>
       <div className="flex h-screen w-1/2 items-center justify-center p-8">

@@ -36,13 +36,11 @@ export const findPlaceholders = (content: string) => {
 };
 
 export const replaceVariables = (
-  content: string,
   inputValues: Record<string, string>,
+  content: string,
 ) => {
-  const placeholders = findPlaceholders(content);
-  return placeholders.reduce((acc, placeholder) => {
-    const regex = new RegExp(`{{${placeholder}}}`);
-    const value = inputValues[placeholder] || "";
-    return acc.replace(regex, value);
+  return Object.entries(inputValues).reduce((content, [placeholder, value]) => {
+    const regex = new RegExp(`{{${placeholder}}}`, "g");
+    return content.replace(regex, value);
   }, content);
 };
