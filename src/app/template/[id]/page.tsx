@@ -15,7 +15,6 @@ interface EditTemplateInterface {
 const ViewTemplate: React.FC<EditTemplateInterface> = ({ params }) => {
   const { findTemplate, templates } = useLocalStorageContext();
   const [currentTemplate, setCurrentTemplate] = useState<TemplateType>();
-  const [loading, setLoading] = useState(true);
   const htmlDivElementRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -24,7 +23,6 @@ const ViewTemplate: React.FC<EditTemplateInterface> = ({ params }) => {
     if (template) {
       setCurrentTemplate(template);
     }
-    setLoading(false);
   }, [params.id, templates]);
 
   useEffect(() => {
@@ -32,10 +30,6 @@ const ViewTemplate: React.FC<EditTemplateInterface> = ({ params }) => {
       htmlDivElementRef.current.innerHTML = currentTemplate.editorContent;
     }
   }, [currentTemplate]);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
 
   if (!currentTemplate) return <NotFound />;
 

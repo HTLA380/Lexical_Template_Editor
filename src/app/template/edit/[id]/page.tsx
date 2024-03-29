@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { Save, ScrollText, X } from "lucide-react";
+import React, { Suspense, useEffect, useState } from "react";
+import { Save, X } from "lucide-react";
 import Tiptap from "@/components/editor/Tiptap";
 import { useRouter } from "next/navigation";
 
@@ -9,8 +9,8 @@ import { useEditorContext } from "@/context/EditorContext";
 import { useLocalStorageContext } from "@/context/LocalStorageContext";
 import { TemplateType } from "@/types/templateTypes";
 import Button from "@/components/button/Button";
-import Link from "next/link";
 import NotFound from "@/app/not-found";
+import Loading from "@/app/loading";
 
 // =====================================================================
 
@@ -25,7 +25,6 @@ const EditTemplate: React.FC<EditTemplateInterface> = ({ params }) => {
   const [currentTemplate, setCurrentTemplate] = useState<TemplateType>();
   const [showModal, setShowModal] = useState<boolean>(false);
   const [documentName, setDocumentName] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(true);
 
   // adding initial values as soon as editor ready
   useEffect(() => {
@@ -38,7 +37,6 @@ const EditTemplate: React.FC<EditTemplateInterface> = ({ params }) => {
       setDocumentName(template.title);
       editor.commands.setContent(template.editorContent);
     }
-    setLoading(false);
   }, [editor]);
 
   const saveUpdatedDocument = () => {
@@ -59,12 +57,6 @@ const EditTemplate: React.FC<EditTemplateInterface> = ({ params }) => {
   const handleModalClose = () => {
     setShowModal(false);
   };
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (!currentTemplate) return <NotFound />;
 
   return (
     <div className="relative bg-slate-100 px-5 pb-10 pt-20">

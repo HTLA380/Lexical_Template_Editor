@@ -3,6 +3,8 @@
 import { EditorContent } from "@tiptap/react";
 import TiptapToolbar from "./TiptapToolbar";
 import { useEditorContext } from "@/context/EditorContext";
+import { Suspense } from "react";
+import Loading from "@/app/loading";
 
 const Tiptap = () => {
   const editor = useEditorContext();
@@ -10,7 +12,9 @@ const Tiptap = () => {
   return (
     <>
       <TiptapToolbar editor={editor} />
-      <EditorContent editor={editor} />
+      <Suspense fallback={<Loading />}>
+        <EditorContent editor={editor} />
+      </Suspense>
     </>
   );
 };

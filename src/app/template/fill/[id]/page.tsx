@@ -19,7 +19,6 @@ const FillData: React.FC<FillDataProps> = ({ params }) => {
   const [htmlContent, setHtmlContent] = useState<string>("");
   const [inputValues, setInputValues] = useState<Record<string, string>>({});
   const [currentTemplate, setCurrentTemplate] = useState<TemplateType>();
-  const [loading, setLoading] = useState(true);
   const router = useRouter();
   const htmlElementRef = useRef<HTMLDivElement>(null);
 
@@ -32,7 +31,6 @@ const FillData: React.FC<FillDataProps> = ({ params }) => {
         htmlElementRef.current.innerHTML = template.editorContent;
       }
     }
-    setLoading(false);
   }, [params.id, templates, currentTemplate]);
 
   useEffect(() => {
@@ -69,10 +67,6 @@ const FillData: React.FC<FillDataProps> = ({ params }) => {
   };
 
   const placeholders = findPlaceholders(currentTemplate?.editorContent || "");
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
 
   if (!currentTemplate) return <NotFound />;
 

@@ -47,9 +47,10 @@ const Template = () => {
   };
 
   return (
-    <main className="relative pb-5 pt-24">
+    <main className="relative px-5 pb-5 pt-24">
       <Header />
-      <div className="mx-auto mt-5 flex min-h-screen w-full max-w-6xl flex-col items-center gap-5">
+
+      <div className="mx-auto mt-5 flex min-h-screen w-full max-w-5xl flex-col items-center gap-5">
         {templates.length > 0 ? (
           templates.map((template) => (
             <RenderTemplate template={template} key={template.id} />
