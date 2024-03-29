@@ -46,7 +46,7 @@ const EditTemplate: React.FC<EditTemplateInterface> = ({ params }) => {
     if (!currentTemplate) return;
     const updatedTemplateObject: TemplateType = {
       ...currentTemplate,
-      title: currentTemplate.title,
+      title: documentName || currentTemplate.title,
       editorContent: editor.getHTML(),
     };
 
