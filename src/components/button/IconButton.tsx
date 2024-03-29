@@ -18,8 +18,7 @@ const IconButton: React.FC<IconButtonInterface> = ({
         "rounded-md p-1.5 hover:bg-blue-100",
         isActive && "bg-sky-200",
       )}
-      onClick={onClickEvent}
-    >
+      onClick={onClickEvent}>
       {icon}
     </button>
   );

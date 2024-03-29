@@ -45,7 +45,7 @@ const EditTemplate: React.FC<EditTemplateInterface> = ({ params }) => {
     };
 
     updateTemplate(updatedTemplateObject, params.id);
-    router.push("/");
+    router.push("/template");
   };
 
   const handleModalClose = () => {

@@ -33,7 +33,7 @@ const CreateTemplate = () => {
     const title = documentName || `Document ${templates?.length || ""}`;
 
     saveTemplate(title, editor.getHTML(), getCurrentDateTime());
-    router.push("/");
+    router.push("/template");
   };
 
   const handleModalClose = () => {

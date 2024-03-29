@@ -22,6 +22,7 @@ export const EditorProvider: React.FC<EditorProviderProps> = ({ children }) => {
       StarterKit,
       Underline,
       TextAlign.configure({
+        types: ["heading", "paragraph"],
         alignments: ["left", "right", "center", "justify"],
       }),
       Link.configure({
@@ -32,7 +33,6 @@ export const EditorProvider: React.FC<EditorProviderProps> = ({ children }) => {
     ],
     content: "Tiptap template editor",
   });
-  // Create your editor instance here
 
   return (
     <EditorContext.Provider value={editor}>{children}</EditorContext.Provider>

@@ -65,7 +65,7 @@ const FillData: React.FC<FillDataProps> = ({ params }) => {
     };
 
     updateTemplate(filledTemplateObject, params.id);
-    router.push("/");
+    router.push("/template");
   };
 
   const placeholders = findPlaceholders(currentTemplate?.editorContent || "");
@@ -80,17 +80,23 @@ const FillData: React.FC<FillDataProps> = ({ params }) => {
       <div className="flex h-screen w-1/2 items-center justify-center p-8">
         <div className="relative h-full max-h-96 w-full max-w-xl rounded-lg border bg-white p-3">
           <h3 className="text-center text-xl font-semibold">Form</h3>
-          {placeholders.map((placeholder) => (
-            <div className="mb-3" key={placeholder}>
-              <p className="mb-1.5 text-sm text-gray-700">{placeholder}</p>
-              <input
-                className="w-full rounded-md border border-gray-300 bg-transparent px-4 py-2 text-sm"
-                name={placeholder}
-                placeholder={placeholder}
-                onChange={handleInputChange}
-              />
-            </div>
-          ))}
+          {placeholders.length > 0 ? (
+            placeholders.map((placeholder) => (
+              <div className="mb-3" key={placeholder}>
+                <p className="mb-1.5 text-sm text-gray-700">{placeholder}</p>
+                <input
+                  className="w-full rounded-md border border-gray-300 bg-transparent px-4 py-2 text-sm"
+                  name={placeholder}
+                  placeholder={placeholder}
+                  onChange={handleInputChange}
+                />
+              </div>
+            ))
+          ) : (
+            <p className="mt-28 text-center text-sm font-semibold text-red-500">
+              No Variable Provided
+            </p>
+          )}
 
           <button
             onClick={saveFilledTemplate}

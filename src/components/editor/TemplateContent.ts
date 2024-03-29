@@ -1,2 +1,0 @@
-export const templateContent =
-  '<p><strong>Hi {{first-name}},</strong></p><p><br class="ProseMirror-trailingBreak"></p><p>Thank you for putting your trust in Lawmatics Law frame to handle your legal matter.</p><p><br class="ProseMirror-trailingBreak"></p><p>We look forward to meeting with you on <strong>{{meeting-date}}</strong>.</p><p><br class="ProseMirror-trailingBreak"></p><p>If any question arise before then, feel free to call us <strong>{{phone-number}}</strong>.</p>';
