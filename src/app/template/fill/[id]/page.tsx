@@ -6,6 +6,7 @@ import { Save } from "lucide-react";
 import { useLocalStorageContext } from "@/context/LocalStorageContext";
 import { findPlaceholders, replaceVariables } from "@/util/templateUtils";
 import { TemplateType } from "@/types/templateTypes";
+import NotFound from "@/app/not-found";
 
 // ==========================================================================
 
@@ -14,29 +15,25 @@ interface FillDataProps {
 }
 
 const FillData: React.FC<FillDataProps> = ({ params }) => {
-  const { findTemplate, updateTemplate } = useLocalStorageContext();
+  const { findTemplate, updateTemplate, templates } = useLocalStorageContext();
   const [htmlContent, setHtmlContent] = useState<string>("");
   const [inputValues, setInputValues] = useState<Record<string, string>>({});
-  const [currentTemplate, setCurrentTemplate] = useState<TemplateType | null>(
-    null,
-  );
+  const [currentTemplate, setCurrentTemplate] = useState<TemplateType>();
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   const htmlElementRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const currentTemplate = findTemplate(params.id);
-    if (currentTemplate) {
-      setCurrentTemplate(currentTemplate);
-      setHtmlContent(currentTemplate.editorContent);
-      setLoading(false);
+    const template = findTemplate(params.id);
+    if (template) {
+      setCurrentTemplate(template);
+      setHtmlContent(template.editorContent);
       if (htmlElementRef.current) {
-        htmlElementRef.current.innerHTML = currentTemplate.editorContent;
+        htmlElementRef.current.innerHTML = template.editorContent;
       }
-    } else {
-      router.push("/404");
     }
-  }, [params.id, currentTemplate]);
+    setLoading(false);
+  }, [params.id, templates, currentTemplate]);
 
   useEffect(() => {
     const updatedContent = replaceVariables(
@@ -76,6 +73,8 @@ const FillData: React.FC<FillDataProps> = ({ params }) => {
   if (loading) {
     return <div>Loading...</div>;
   }
+
+  if (!currentTemplate) return <NotFound />;
 
   return (
     <main className="flex min-h-screen w-full items-center bg-slate-200">

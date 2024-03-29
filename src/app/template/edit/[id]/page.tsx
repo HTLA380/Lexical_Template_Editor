@@ -10,6 +10,7 @@ import { useLocalStorageContext } from "@/context/LocalStorageContext";
 import { TemplateType } from "@/types/templateTypes";
 import Button from "@/components/button/Button";
 import Link from "next/link";
+import NotFound from "@/app/not-found";
 
 // =====================================================================
 
@@ -36,10 +37,8 @@ const EditTemplate: React.FC<EditTemplateInterface> = ({ params }) => {
       setCurrentTemplate(template);
       setDocumentName(template.title);
       editor.commands.setContent(template.editorContent);
-      setLoading(false);
-    } else {
-      router.push("/404");
     }
+    setLoading(false);
   }, [editor]);
 
   const saveUpdatedDocument = () => {
@@ -62,9 +61,10 @@ const EditTemplate: React.FC<EditTemplateInterface> = ({ params }) => {
   };
 
   if (loading) {
-    // Render loading spinner or message while fetching template
     return <div>Loading...</div>;
   }
+
+  if (!currentTemplate) return <NotFound />;
 
   return (
     <div className="relative bg-slate-100 px-5 pb-10 pt-20">
