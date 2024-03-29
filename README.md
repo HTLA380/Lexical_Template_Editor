@@ -1,36 +1,22 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# TipTap Template Editor
 
-## Getting Started
+A React application using Tiptap rich text editor with TypeScript, integrating localStorage utilities for storing and managing editor content.
 
-First, run the development server:
+## Screenshots
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Templat Lists:
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+![template-page-preview](https://github.com/HTLA380/Tiptap_Template_Editor/assets/113810462/5937195f-afb5-4991-9766-13708134e0f7)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Create Template/Edit Template:
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+![template-create-page-preview](https://github.com/HTLA380/Tiptap_Template_Editor/assets/113810462/8caf24bf-1efa-4fa4-b8d4-d785c840ff34)
 
-## Learn More
+Fill Template:
 
-To learn more about Next.js, take a look at the following resources:
+![template-fill-page-preview](https://github.com/HTLA380/Tiptap_Template_Editor/assets/113810462/a6bd702d-2162-44c5-bfb0-c3b30d765328)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Live Preview
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+[tiptap-template-editor](https://tiptap-template-editor.vercel.app/)
