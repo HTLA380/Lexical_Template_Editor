@@ -9,13 +9,15 @@ import { useEditorContext } from "@/context/EditorContext";
 import { getCurrentDateTime } from "@/util/dateUtil";
 import { useLocalStorageContext } from "@/context/LocalStorageContext";
 import Button from "@/components/button/Button";
+import { exampleContent } from "./exampleContent";
 
 // =====================================================================
 
 const CreateTemplate = () => {
   const editor = useEditorContext();
   const router = useRouter();
-  const { templates, saveTemplate } = useLocalStorageContext();
+  const { templates, createTemplate: createTemplate } =
+    useLocalStorageContext();
 
   const [showModal, setShowModal] = useState<boolean>(false);
   const [documentName, setDocumentName] = useState<string>("");
@@ -23,7 +25,7 @@ const CreateTemplate = () => {
   // setting the initial data as soon as the editor ready
   useEffect(() => {
     if (editor) {
-      editor.commands.setContent("<p>Create Template</p>");
+      editor.commands.setContent(exampleContent);
     }
   }, [editor]);
 
@@ -32,7 +34,7 @@ const CreateTemplate = () => {
 
     const title = documentName || `Document ${templates?.length || ""}`;
 
-    saveTemplate(title, editor.getHTML(), getCurrentDateTime());
+    createTemplate(title, editor.getHTML(), getCurrentDateTime());
     router.push("/template");
   };
 

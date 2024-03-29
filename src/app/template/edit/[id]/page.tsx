@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Save, X } from "lucide-react";
+import { Save, ScrollText, X } from "lucide-react";
 import Tiptap from "@/components/editor/Tiptap";
 import { useRouter } from "next/navigation";
 
@@ -9,6 +9,7 @@ import { useEditorContext } from "@/context/EditorContext";
 import { useLocalStorageContext } from "@/context/LocalStorageContext";
 import { TemplateType } from "@/types/templateTypes";
 import Button from "@/components/button/Button";
+import Link from "next/link";
 
 // =====================================================================
 
@@ -20,27 +21,35 @@ const EditTemplate: React.FC<EditTemplateInterface> = ({ params }) => {
   const editor = useEditorContext();
   const router = useRouter();
 
+  const [currentTemplate, setCurrentTemplate] = useState<TemplateType>();
   const [showModal, setShowModal] = useState<boolean>(false);
   const [documentName, setDocumentName] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(true);
 
   // adding initial values as soon as editor ready
   useEffect(() => {
     if (!editor) return;
 
     const template = findTemplate(params.id);
-    setDocumentName(template?.title || "Document");
-    editor.commands.setContent(template?.editorContent || "Content");
+
+    if (template) {
+      setCurrentTemplate(template);
+      setDocumentName(template.title);
+      editor.commands.setContent(template.editorContent);
+      setLoading(false);
+    } else {
+      router.push("/404");
+    }
   }, [editor]);
 
   const saveUpdatedDocument = () => {
     // do nothing if the editor doesn't have any elements
     if (!editor || editor.state.doc.content.childCount === 0) return;
-    const template = findTemplate(params.id);
 
-    if (!template) return;
+    if (!currentTemplate) return;
     const updatedTemplateObject: TemplateType = {
-      ...template,
-      title: template.title,
+      ...currentTemplate,
+      title: currentTemplate.title,
       editorContent: editor.getHTML(),
     };
 
@@ -51,6 +60,11 @@ const EditTemplate: React.FC<EditTemplateInterface> = ({ params }) => {
   const handleModalClose = () => {
     setShowModal(false);
   };
+
+  if (loading) {
+    // Render loading spinner or message while fetching template
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="relative bg-slate-100 px-5 pb-10 pt-20">

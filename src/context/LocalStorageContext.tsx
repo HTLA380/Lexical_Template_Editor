@@ -13,7 +13,8 @@ interface LocalStorageContextInterface {
   setTemplates: React.Dispatch<React.SetStateAction<TemplateType[] | []>>;
   findTemplate: (id: string) => TemplateType | null;
   updateTemplate: (updated: TemplateType, id: string) => void;
-  saveTemplate: (title: string, content: string, createAt: string) => void;
+  createTemplate: (title: string, content: string, createAt: string) => void;
+  deleteTemplate: (id: string) => void;
 }
 
 const LocalStorageContext = createContext<LocalStorageContextInterface>({
@@ -21,7 +22,8 @@ const LocalStorageContext = createContext<LocalStorageContextInterface>({
   setTemplates: () => {},
   findTemplate: () => null,
   updateTemplate: () => {},
-  saveTemplate: () => {},
+  createTemplate: () => {},
+  deleteTemplate: () => {},
 });
 
 export const useLocalStorageContext = () => useContext(LocalStorageContext);
@@ -44,18 +46,7 @@ export const LocalStorageProvider: React.FC<LocalStorageProviderProps> = ({
     return templates.find((t) => t.id === id) || null;
   };
 
-  const updateTemplate = (updated: TemplateType, id: string) => {
-    const updatedTemplate = templates?.map((template) =>
-      template.id === id ? { ...template, ...updated } : template,
-    );
-
-    if (updatedTemplate) {
-      saveDataToLocalStorage("templates", updatedTemplate);
-      setTemplates(updatedTemplate);
-    }
-  };
-
-  const saveTemplate = (title: string, content: string, createAt: string) => {
+  const createTemplate = (title: string, content: string, createAt: string) => {
     const tempTemplate = templates;
 
     const newTemplate: TemplateType = {
@@ -69,6 +60,29 @@ export const LocalStorageProvider: React.FC<LocalStorageProviderProps> = ({
     saveDataToLocalStorage("templates", tempTemplate);
   };
 
+  const updateTemplate = (updated: TemplateType, id: string) => {
+    const updatedTemplate = templates?.map((template) =>
+      template.id === id ? { ...template, ...updated } : template,
+    );
+
+    if (updatedTemplate) {
+      saveDataToLocalStorage("templates", updatedTemplate);
+      setTemplates(updatedTemplate);
+    }
+  };
+
+  const deleteTemplate = (id: string) => {
+    const targetTemplate = findTemplate(id);
+
+    if (targetTemplate) {
+      const filteredTemplates = templates.filter(
+        (template) => template.id !== id,
+      );
+      saveDataToLocalStorage("templates", filteredTemplates);
+      setTemplates(filteredTemplates);
+    }
+  };
+
   return (
     <LocalStorageContext.Provider
       value={{
@@ -76,7 +90,8 @@ export const LocalStorageProvider: React.FC<LocalStorageProviderProps> = ({
         setTemplates,
         findTemplate,
         updateTemplate,
-        saveTemplate,
+        createTemplate,
+        deleteTemplate,
       }}>
       {children}
     </LocalStorageContext.Provider>

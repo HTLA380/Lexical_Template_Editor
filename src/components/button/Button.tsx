@@ -5,7 +5,7 @@ interface ButtonProps {
   children: React.ReactNode;
   className?: string;
   onClick?: () => void;
-  variant?: "primary" | "outline" | "secondary";
+  variant?: "primary" | "outline" | "secondary" | "danger";
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -26,6 +26,9 @@ const Button: React.FC<ButtonProps> = ({
       break;
     case "secondary":
       buttonColor = "bg-gray-200 text-black";
+      break;
+    case "danger":
+      buttonColor = "bg-red-600 hover:bg-red-700 text-white";
       break;
     default:
       buttonColor = "bg-gray-800 text-white hover:bg-gray-700";

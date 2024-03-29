@@ -20,6 +20,7 @@ const FillData: React.FC<FillDataProps> = ({ params }) => {
   const [currentTemplate, setCurrentTemplate] = useState<TemplateType | null>(
     null,
   );
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
   const htmlElementRef = useRef<HTMLDivElement>(null);
 
@@ -28,10 +29,12 @@ const FillData: React.FC<FillDataProps> = ({ params }) => {
     if (currentTemplate) {
       setCurrentTemplate(currentTemplate);
       setHtmlContent(currentTemplate.editorContent);
-    }
-
-    if (htmlElementRef.current) {
-      htmlElementRef.current.innerHTML = currentTemplate?.editorContent || "";
+      setLoading(false);
+      if (htmlElementRef.current) {
+        htmlElementRef.current.innerHTML = currentTemplate.editorContent;
+      }
+    } else {
+      router.push("/404");
     }
   }, [params.id, currentTemplate]);
 
@@ -70,6 +73,10 @@ const FillData: React.FC<FillDataProps> = ({ params }) => {
 
   const placeholders = findPlaceholders(currentTemplate?.editorContent || "");
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <main className="flex min-h-screen w-full items-center bg-slate-200">
       <div className="h-screen w-1/2 p-8">
@@ -78,7 +85,7 @@ const FillData: React.FC<FillDataProps> = ({ params }) => {
         </div>
       </div>
       <div className="flex h-screen w-1/2 items-center justify-center p-8">
-        <div className="relative h-full max-h-96 w-full max-w-xl rounded-lg border bg-white p-3">
+        <div className="relative h-full max-h-96 w-full max-w-xl overflow-y-scroll rounded-lg border bg-white px-5 py-3">
           <h3 className="text-center text-xl font-semibold">Form</h3>
           {placeholders.length > 0 ? (
             placeholders.map((placeholder) => (
@@ -98,11 +105,13 @@ const FillData: React.FC<FillDataProps> = ({ params }) => {
             </p>
           )}
 
-          <button
-            onClick={saveFilledTemplate}
-            className="absolute bottom-3 right-3 rounded-xl bg-gray-800 p-2 text-white hover:bg-gray-700">
-            <Save />
-          </button>
+          <div className="sticky bottom-0 right-3 flex w-full items-center justify-end">
+            <button
+              onClick={saveFilledTemplate}
+              className="rounded-xl bg-gray-800 p-2 text-white hover:bg-gray-700">
+              <Save />
+            </button>
+          </div>
         </div>
       </div>
     </main>

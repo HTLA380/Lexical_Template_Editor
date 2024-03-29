@@ -5,3 +5,7 @@
 .tiptap {
   @apply min-h-screen border border-gray-200 bg-white p-5;
 }
+
+code {
+  @apply bg-black p-1 text-white;
+}
